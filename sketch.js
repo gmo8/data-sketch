@@ -3,17 +3,20 @@ var bg;
 
 var species;
 
-function preload(){
+var images = [];
 
-    table = loadTable("data/workbook1.cvs", "header");
+function preload(){
+    table = loadTable("data/workbook1.csv", "header");
+    for(var i=0; i < 5; i++){
+      images[i] = loadImage('photos/' + i + '.jpg');
+    }
 }
 
 var table;
 function setup(){
-    createCanvas(1500,1000);    
-    bg = loadImage("libraries/1.jpeg");
+    createCanvas(windowWidth,windowHeight);    
+    bg = loadImage("libraries/back.jpeg");
     loadData();
-
 }
 
 function draw(){
@@ -26,27 +29,26 @@ function draw(){
       }
 }
 
-function loadData() {
+function loadData(){
 
     species = [];
 
     for (var i = 0; i < table.getRowCount(); i++) {
         var row = table.getRow(i);
-        var x = row.get("x");
-    var y = row.get("y");
-    var d = row.get("diameter");
-    var n = row.get("name");
-    species[i] = new Species(x, y, d, n);
+        var animal = row.get("species");
+        var fact = row.get("pop");
+        species[i] = new Species(images[i], random(0, windowWidth), random(0, windowHeight), 80, fact);
   }
 }
 
 class Species {
-    constructor(x, y, diameter, s) {
+    constructor(photo, x, y, diameter, s) {
       this.x = Number(x);
       this.y = Number(y);
       this.diameter = Number(diameter);
       this.name = s;
-      this.over = false; 
+      this.over = false;
+      this.photo = photo; 
     }
       rollover(px, py) {
         var d = dist(px, py, this.x, this.y);
@@ -60,8 +62,7 @@ class Species {
 display() {
     stroke(0);
     strokeWeight(2);
-    noFill();
-    ellipse(this.x, this.y, this.diameter, this.diameter);
+    images(this.photo, this.x, this.y, this.diameter, this.diameter);
     if (this.over) {
       textAlign(CENTER);
       noStroke();
